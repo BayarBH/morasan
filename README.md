@@ -5,7 +5,7 @@
 
 **架空のデモです。実在の企業・人物とは関係ありません。** 登場する会社「ミライカーシェア（架空）」と約300名の会員データは、すべてプログラムで生成した架空のものです。
 
-- デモURL: `https://morasan-<PROJECT_NUMBER>.asia-east1.run.app`
+- デモURL: `https://morasan-760253059957.asia-east1.run.app`
 - デモ動画（約3分）: 〔YouTube URL〕
 - 審査用テストアカウント: 提出フォームに記載（このREADMEにはパスワードを載せていません）
 - 姉妹プロジェクト: マッタ（MATTA）〔リポジトリURL〕 — 送金に「待った」をかける見守りエージェント
@@ -127,7 +127,7 @@ npm run deploy                    # Cloud Run へデプロイ（infra/deploy.sh�
 
 ## テストアカウント
 
-デモURL：`https://morasan-<PROJECT_NUMBER>.asia-east1.run.app`
+デモURL：`https://morasan-760253059957.asia-east1.run.app`
 
 | 役割 | メールアドレス | パスワード | できること |
 |---|---|---|---|

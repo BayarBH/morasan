@@ -42,7 +42,7 @@ fi
 
 echo "== Deploy"
 retry gcloud run deploy "$SERVICE" --project "$PROJECT" --region "$RUN_REGION" --image "$IMAGE" \
-  --service-account "$SA_WEB" --allow-unauthenticated --max-instances=2 \
+  --service-account "$SA_WEB" --allow-unauthenticated --no-invoker-iam-check --max-instances=2 \
   --set-env-vars="^;^NODE_ENV=production;GOOGLE_CLOUD_PROJECT=${PROJECT};GOOGLE_CLOUD_LOCATION=global;MODEL_FAST=${MODEL_FAST};MODEL_SMART=${MODEL_SMART};FIRESTORE_DATABASE_ID=morasan;DATA_OWNER_EMAIL=${DATA_OWNER_EMAIL}"
 
 echo "== URL: ${URL}"

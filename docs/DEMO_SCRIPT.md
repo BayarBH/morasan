@@ -4,7 +4,7 @@
 
 ## 撮影前チェック
 - [ ] `npm run check:models` が PASS
-- [ ] 本番URL `https://morasan-<PROJECT_NUMBER>.asia-east1.run.app` をシークレットウィンドウで開く
+- [ ] 本番URL `https://morasan-760253059957.asia-east1.run.app` をシークレットウィンドウで開く
 - [ ] ウィンドウA：`staff@morasan.demo`（窓口スタッフ）／ウィンドウB：`owner@morasan.demo`（データオーナー）
 - [ ] プリセット2を一度試し、Gemini が保留を返すことを確認（返さない場合は撮り直し。ナレーションは「AIが保留にしました」と言える回だけ使う）
 - [ ] ブラウザの拡大率 110〜125%、通知・ブックマークバー非表示

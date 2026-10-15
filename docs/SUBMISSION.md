@@ -33,7 +33,7 @@ AIは止められるが、出せない。AIエージェントの個人データ�
 
 ## 動作確認の方法
 
-デモURL：`https://morasan-<PROJECT_NUMBER>.asia-east1.run.app`
+デモURL：`https://morasan-760253059957.asia-east1.run.app`
 
 テストアカウント（メールアドレス＋パスワード。ソーシャルログイン・メール認証は不要です）：
 
