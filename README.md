@@ -62,7 +62,7 @@ AIエージェントも窓口スタッフも、顧客の個人データを読む
 | `R-SENSITIVE-BULK` | 機微項目（`address` / `licenseImage` / `licenseNumber`）を2件以上（`sensitiveMaxRows` = 1 超） | 拒否 |
 | `R-WITHDRAWN-DENY` | 選択した行に退会済み会員が含まれる | 拒否 |
 | `AI-PURPOSE-MASK` | Gemini が目的に照らして一部項目は不要と判断 | マスク |
-| `AI-PURPOSE-HOLD` | Gemini が目的と要求項目が合わないと判断 | 保留 |
+| `AI-PURPOSE-HOLD` | Gemini が目的と要求項目が合わないと判断。または不要と判断した項目に機微項目（住所・免許証）が含まれる | 保留 |
 | `AI-FAILSAFE-HOLD` | Gemini のエラー・タイムアウト・不正な出力 | 保留 |
 | `OWNER-APPROVE` / `OWNER-DENY` | データオーナーが保留を承認／却下 | 出力（マスク項目があればマスク）／拒否 |
 
