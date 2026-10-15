@@ -1,0 +1,36 @@
+{
+  "name": "morasan",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check:models": "tsx --env-file-if-exists=.env.local scripts/check-models.ts",
+    "seed:users": "tsx --env-file-if-exists=.env.local scripts/seed-users.ts",
+    "deploy": "bash infra/deploy.sh"
+  },
+  "dependencies": {
+    "@google/genai": "^2.29.0",
+    "firebase": "^13.0.0",
+    "firebase-admin": "^14.5.0",
+    "next": "16",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4"
+  }
+}

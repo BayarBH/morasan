@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>モラサン アーキテクチャ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; background: #ffffff; }
+  body { font-family: "Yu Gothic UI", "Meiryo", "Noto Sans JP", sans-serif; color: #1f2937; position: relative; }
+  .b { position: absolute; border-radius: 12px; border: 2px solid #94a3b8; background: #f8fafc; padding: 10px 14px; }
+  .t { font-weight: 700; font-size: 18px; }
+  .s { font-size: 14px; color: #475569; line-height: 1.45; }
+  .chip { border-radius: 8px; padding: 6px 10px; margin-top: 8px; font-size: 15px; background: #fff; border: 1.5px solid #cbd5e1; }
+  .bad { border-color: #dc2626; color: #b91c1c; background: #fef2f2; }
+  .mono { font-family: Consolas, monospace; font-size: 13px; }
+  svg { position: absolute; left: 0; top: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+
+
+<!-- title -->
+<div style="position:absolute;left:30px;top:22px;font-size:28px;font-weight:800;">モラサン（漏らさん）アーキテクチャ</div>
+<div style="position:absolute;left:520px;top:30px;font-size:20px;font-weight:700;color:#b91c1c;">AIは止められるが、出せない。</div>
+<div style="position:absolute;right:30px;top:34px;font-size:14px;color:#64748b;">架空のデモです。実在の企業・人物とは関係ありません。</div>
+
+<!-- requesters -->
+<div class="b" style="left:30px;top:100px;width:270px;height:470px;">
+  <div class="t">リクエスタ</div>
+  <div class="s">個人データを読むときは必ずここを通る</div>
+  <div class="chip">AIエージェント<br><span class="mono">support-bot</span></div>
+  <div class="chip">AIエージェント<br><span class="mono">marketing-agent</span></div>
+  <div class="chip">AIエージェント<br><span class="mono">analytics-agent</span></div>
+  <div class="chip bad">不審なエージェント<br><span class="mono">unknown-agent</span></div>
+  <div class="chip">窓口スタッフ（Firebase Auth）</div>
+</div>
+
+
+<!-- cloud run -->
+<div class="b" style="left:360px;top:100px;width:730px;height:525px;border-color:#2563eb;background:#eff6ff;">
+  <div class="t" style="color:#1d4ed8;">Cloud Run（asia-east1）　モラサン Gateway（Next.js）</div><div class="s">入口：<span class="mono">POST /api/gateway/request</span></div>
+</div>
+<div class="b" style="left:390px;top:202px;width:210px;height:200px;background:#fff;">
+  <div class="t">① 決定的ルール</div>
+  <div class="s" style="font-size:13px;">pure TypeScript・単体テスト付き<br>・大量／機微項目の一括<br>・退会者／カナリア<br>・常時マスク<br><b>ruleId + policyHash</b></div>
+</div>
+<div class="b" style="left:630px;top:202px;width:230px;height:200px;background:#fff;border-color:#7c3aed;">
+  <div class="t" style="color:#6d28d9;">② Gemini 目的審査</div>
+  <div class="s" style="font-size:13px;">目的と要求項目を比較<br>返せるのは <b>ok / mask / hold</b><br>（「承認」は存在しない）<br>目的文はデータとして扱う<br>エラー・不正出力は保留</div>
+</div>
+<div class="b" style="left:885px;top:202px;width:175px;height:200px;background:#fff;border-color:#0f766e;">
+  <div class="t" style="color:#0f766e;font-size:16px;">③ combine＝max</div>
+  <div class="s" style="font-size:13px;">出力 &lt; マスク<br>&lt; 保留 &lt; 拒否<br>ルールより<br>緩くならない</div>
+</div>
+<div style="position:absolute;left:390px;top:430px;width:670px;" class="s">画面：コンソール ／ リクエスト詳細 ／ データオーナー受信箱 ／ ブラックボックス</div>
+<div class="b" style="left:390px;top:465px;width:660px;height:135px;background:#fff;border-style:dashed;">
+  <div class="t">ブラックボックス（監査）</div>
+  <div class="s">すべてのステップを AuditEvent として記録：<span class="mono">request.received → rules.evaluated → ai.reviewed → decision.final → owner.approve/deny → data.released</span><br>ruleIds・policyHash・モデル名・応答時間。カナリアに触れたら <b style="color:#b91c1c;">canary.alert</b>（赤いアラート）。生の個人データは記録しない。</div>
+</div>
+
+<!-- outcomes -->
+<div class="b" style="left:1130px;top:112px;width:440px;height:56px;border-color:#16a34a;background:#f0fdf4;"><span class="t" style="color:#15803d;">出力</span> <span class="s">要求項目だけを返す</span></div>
+<div class="b" style="left:1130px;top:182px;width:440px;height:56px;border-color:#2563eb;background:#eff6ff;"><span class="t" style="color:#1d4ed8;">マスク</span> <span class="s">該当項目は「＊＊＊」</span></div>
+<div class="b" style="left:1130px;top:322px;width:440px;height:56px;border-color:#d97706;background:#fffbeb;"><span class="t" style="color:#b45309;">保留</span> <span class="s">データオーナーの判断待ち</span></div>
+<div class="b" style="left:1130px;top:252px;width:440px;height:56px;border-color:#dc2626;background:#fef2f2;"><span class="t" style="color:#b91c1c;">拒否</span> <span class="s">何も返さない（最終・承認不可）</span></div>
+
+<div class="b" style="left:1130px;top:448px;width:440px;height:124px;border-color:#d97706;background:#fff;">
+  <div class="t">データオーナー受信箱</div>
+  <div class="s">個人情報保護責任者だけが承認／却下<br>Firebase IDトークンをサーバーで検証（本人に紐づく）<br>リクエスタ本人は承認不可 → 承認で出力（必要ならマスク）</div>
+</div>
+
+<!-- bottom -->
+<div class="b" style="left:30px;top:680px;width:290px;height:180px;background:#fff;">
+  <div class="t">原則</div>
+  <div class="s">データを出せるのは<br>決定的ルールとデータオーナーだけ。<br>Gemini は締める方向（マスク・保留）にしか動けない。</div>
+</div>
+<div class="b" style="left:360px;top:680px;width:270px;height:180px;">
+  <div class="t">会員DB（架空）</div>
+  <div class="s">ミライカーシェア（架空）約300名<br>約2割が退会済み<br>カナリア（ハニートークン）3件</div>
+</div>
+<div class="b" style="left:660px;top:680px;width:300px;height:180px;border-color:#7c3aed;">
+  <div class="t">Gemini</div>
+  <div class="s">Gemini Enterprise Agent Platform<br>（旧 Vertex AI）<br><span class="mono">@google/genai</span>・構造化JSON（zod検証）<br>429・タイムアウトは1回再試行</div>
+</div>
+<div class="b" style="left:990px;top:680px;width:290px;height:180px;">
+  <div class="t">Firestore</div>
+  <div class="s">データベース <span class="mono">morasan</span><br><span class="mono">requests</span>（リクエスト記録）<br><span class="mono">audit</span>（ブラックボックス）</div>
+</div>
+<div class="b" style="left:1310px;top:680px;width:260px;height:180px;">
+  <div class="t">Firebase Authentication</div>
+  <div class="s">メール＋パスワード<br>staff / owner のテストアカウント</div>
+  <div class="s" style="margin-top:14px;">ビルド：Cloud Build<br>→ Artifact Registry</div>
+</div>
+<svg width="1600" height="900">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker>
+  </defs>
+  <g stroke="#475569" stroke-width="2.5" fill="none" marker-end="url(#a)">
+    <!-- requesters -> gateway -->
+    <path d="M300 330 L 385 330"/>
+    <!-- step1 -> step2 -> step3 -->
+    <path d="M600 300 L 628 300"/>
+    <path d="M860 300 L 883 300"/>
+    <!-- step3 -> outcomes -->
+    <path d="M1060 300 C 1090 300, 1090 140, 1128 140"/>
+    <path d="M1060 300 C 1095 300, 1095 210, 1128 210"/>
+    <path d="M1060 300 C 1100 300, 1100 280, 1128 280"/>
+    <path d="M1060 300 C 1090 300, 1090 350, 1128 350"/>
+    <!-- member db -> step1 -->
+    <path d="M495 678 L 495 628"/>
+    <!-- step2 <-> gemini -->
+    <path d="M745 676 L 745 628" marker-start="url(#a)"/>
+    <!-- gateway -> firestore -->
+    <path d="M1060 625 L 1100 678"/>
+    <!-- firebase auth -> owner inbox -->
+    <path d="M1440 678 L 1440 572"/>
+    <!-- owner inbox -> released -->
+    <path d="M1572 500 C 1595 500, 1595 140, 1574 140"/>
+  </g>
+  <!-- hold -> owner inbox -->
+  <path d="M1350 380 L 1350 446" stroke="#d97706" stroke-width="3" fill="none" marker-end="url(#r)"/>
+  <!-- deny shortcut from step1 (skips Gemini) -->
+  <path d="M560 202 C 560 180, 580 178, 610 178 L 1040 178 C 1090 178, 1100 240, 1128 275" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5" fill="none" marker-end="url(#a)"/>
+  <text x="640" y="172" font-size="13" fill="#b91c1c">ルールで拒否なら Gemini は呼ばない</text>
+  <text x="505" y="660" font-size="13" fill="#475569">行を選択 → ①</text>
+  <text x="755" y="660" font-size="13" fill="#475569">② 目的審査（JSON）</text>
+  <text x="1112" y="648" font-size="13" fill="#475569">記録</text>
+  <text x="1450" y="630" font-size="13" fill="#475569">IDトークン検証</text>
+</svg>
+</body>
+</html>

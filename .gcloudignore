@@ -1,0 +1,9 @@
+# Upload context for `gcloud builds submit` (repo root).
+.git/
+node_modules/
+.next/
+*.tsbuildinfo
+.env
+.env*
+coverage/
+docs/
